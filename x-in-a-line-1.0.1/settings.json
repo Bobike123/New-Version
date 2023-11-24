@@ -32,7 +32,7 @@
     0
   ],
   "FAST_MODE": true,
-  "SHUFFLE_PLAYERS_ON_START": false,
+  "SHUFFLE_PLAYERS_ON_START": true,
   "CHANCE_OF_BLOCKED_ON_START": 0.05,
   "RESTART_DELAY": 0,
   "KEY_DELAY": 50,

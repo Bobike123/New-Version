@@ -31,38 +31,54 @@ class WorldDestroyer(BaseBot):
         for x, y in obstacles:
             self.board[x][y] = BoardCell.BLOCKED
     def check(self,x,y)-> bool:
-        if y >= 0 and y < self.cols and x>=0 and y< self.rows:
+        if y >= 0 and y < self.cols and x>=0 and x< self.rows:
             return True
         return False
     def check_vertical_up(self,x,y)->bool:      #check up the winning steps(ask for how to get the winning moves)
+        print("Checking...")
         if y >= 0 and y < self.cols:      
             for c in range(1, 6):    
                 cy = y - c
-                if cy < 0 or self.board[x][cy] != BoardCell.CLEAR:
+                if self.check(x,cy)==True:
+                    if cy < 0 or self.board[x][cy] != BoardCell.CLEAR:
+                        return False
+                else:
                     return False
             return True
         return False
     def check_vertical_down(self,x,y)->bool:    #check down the winning steps(ask for how to get the winning moves)
+        print("Checking...")
         if y >= 0 and y < self.cols:      
             for c in range(1, 6):    
                 cy = y + c
-                if cy >= self.cols or self.board[x][cy] != BoardCell.CLEAR:
+                if self.check(x,cy)==True:
+                    if cy >= self.cols or self.board[x][cy] != BoardCell.CLEAR:
+                        return False
+                else:
                     return False
             return True
         return False
     def check_orizontal_left(self,x,y)->bool:   #check left the winning steps(ask for how to get the winning moves)
+        print("Checking...")
         if x >= 0 and x < self.rows:
             for c in range(1, 6):    
                 cx = x - c
-                if cx < 0 or self.board[cx][y] != BoardCell.CLEAR:
+                if self.check(cx,y)==True:
+                    if cx < 0 or self.board[cx][y] != BoardCell.CLEAR:
+                        return False
+                else:
                     return False
             return True
         return False
     def check_orizontal_right(self,x,y)->bool:  #check right the winning steps(ask for how to get the winning moves)
+        print("Checking...")
         if x >= 0 and x < self.rows: 
             for c in range(1, 6):    
                 cx = x + c
-                if cx >= self.rows or self.board[cx][y] != BoardCell.CLEAR:
+                if self.check(cx,y)==True:
+                    if cx >= self.rows or self.board[cx][y] != BoardCell.CLEAR:
+                        return False
+                else:
                     return False
             return True
         return False
@@ -71,10 +87,14 @@ class WorldDestroyer(BaseBot):
         cx=x
         cy=y
         if y >= 0 and y < self.cols:
+            print("Checking...")
             while c!=5:
-                cy = y + c
-                cx = x - c
-                if self.board[cx][cy] !=BoardCell.CLEAR and cx<=0 and cy>self.rows:
+                cy = cy - c
+                cx = cx + c
+                if self.check(cx,cy)==True:
+                    if self.board[cx][cy] !=BoardCell.CLEAR:
+                        return False
+                else:
                     return False
                 c+=1
             return True
@@ -84,10 +104,14 @@ class WorldDestroyer(BaseBot):
         cx=x
         cy=y
         if y >= 0 and y < self.cols:
+            print("Checking...")
             while c!=5:
-                cy = y + c
-                cx = x + c
-                if self.board[cx][cy] !=BoardCell.CLEAR and cx<=0 and cy>self.rows:
+                cy = cy + c
+                cx = cx + c
+                if self.check(cx,cy)==True:
+                    if self.board[cx][cy] !=BoardCell.CLEAR:
+                        return False
+                else:
                     return False
                 c+=1
             return True
@@ -97,10 +121,14 @@ class WorldDestroyer(BaseBot):
         cx=x
         cy=y
         if y >= 0 and y < self.cols:
+            print("Checking...")
             while c!=5:
-                cy = y - c
-                cx = x - c
-                if self.board[cx][cy] !=BoardCell.CLEAR and cx<=0 and cy>self.rows:
+                cy = cy - c
+                cx = cx - c
+                if self.check(cx,cy)==True:
+                    if self.board[cx][cy] !=BoardCell.CLEAR:
+                        return False
+                else:
                     return False
                 c+=1
             return True
@@ -110,20 +138,36 @@ class WorldDestroyer(BaseBot):
         cx=x
         cy=y
         if y >= 0 and y < self.cols:
+            print("Checking...")
             while c!=5:
-                cy = y - c
-                cx = x + c
-                if self.board[cx][cy] !=BoardCell.CLEAR and cx<=0 and cy>self.rows:
+                cy = cy + c
+                cx = cx - c
+                if self.check(cx,cy)==True:
+                    if self.board[cx][cy] !=BoardCell.CLEAR:
+                        return False
+                else:
                     return False
                 c+=1
             return True
         return False
 #def if any other bot is
-
+    def win_check(self)->(int,int):
+        k=0
+        for y in range(self.rows):
+            for x in range(self.cols):
+                if self.board[y][x] == BoardCell.BOT:
+                    k+=1
+                    if k==4 and self.board[x][y+1]==BoardCell.CLEAR:#winning move #checking for orizontal
+                        print(f"BLOCKED BITCH x{x},y{y+1}")
+                        return x ,y+1
+                else:
+                    k=0
+        return None    
 #TODO: CHECK WHICH WAY IS THE WINNING POSITION AND DONT WRITE IN THAT POSITION IF YOU CANNOT WIN
-#maybe implement diagonal later but i dont think is necesarry
     def make_a_move(self, time_left: int) -> (int, int):
         self.move=self.move+1
+        if self.win_check()!= None:
+            return self.win_check()
         print(f"Initial X:{self.initialLocation_x}")
         print(f"Initial Y:{self.initialLocation_y}")
         print(f"Previous X:{self.previous_x}")
@@ -143,6 +187,7 @@ class WorldDestroyer(BaseBot):
                     self.direction="NE"
                     if self.board[x][y]==BoardCell.CLEAR:
                         print(f"This boardcell is clear (x:{x},y:{y})")
+                        print("UUUH I am going north-east")
                         return x,y
                 if(self.check_diagonal_down_r(x,y)==True):#going down-right
                     self.initialLocation_x=x
@@ -153,6 +198,7 @@ class WorldDestroyer(BaseBot):
                     self.direction="SE"
                     if self.board[x][y]==BoardCell.CLEAR:
                         print(f"This boardcell is clear (x:{x},y:{y})")
+                        print("UUUH I am going south-east")
                         return x,y
                 if(self.check_diagonal_up_l(x,y)==True):#going up-left
                     self.initialLocation_x=x
@@ -163,6 +209,7 @@ class WorldDestroyer(BaseBot):
                     self.direction="NW"
                     if self.board[x][y]==BoardCell.CLEAR:
                         print(f"This boardcell is clear (x:{x},y:{y})")
+                        print("UUUH I am going north-west")
                         return x,y
                 if(self.check_diagonal_down_l(x,y)==True):#going down-left
                     self.initialLocation_x=x
@@ -173,6 +220,7 @@ class WorldDestroyer(BaseBot):
                     self.direction="SW"
                     if self.board[x][y]==BoardCell.CLEAR:
                         print(f"This boardcell is clear (x:{x},y:{y})")
+                        print("UUUH I am going south-west")
                         return x,y
                 if(self.check_vertical_up(x,y)==True):#going up
                     self.initialLocation_x=x
@@ -183,6 +231,7 @@ class WorldDestroyer(BaseBot):
                     self.direction="N"
                     if self.board[x][y]==BoardCell.CLEAR:
                         print(f"This boardcell is clear (x:{x},y:{y})")
+                        print("UUUH I am going north")
                         return x,y
                 if(self.check_vertical_down(x,y)==True):#going down
                     self.initialLocation_x=x
@@ -193,6 +242,7 @@ class WorldDestroyer(BaseBot):
                     self.direction="S"
                     if self.board[x][y]==BoardCell.CLEAR:
                         print(f"This boardcell is clear (x:{x},y:{y})")
+                        print("UUUH I am going south")
                         return x,y
                 if(self.check_orizontal_right(x,y)==True):#going right
                     self.initialLocation_x=x
@@ -203,6 +253,7 @@ class WorldDestroyer(BaseBot):
                     self.direction="E"
                     if self.board[x][y]==BoardCell.CLEAR:
                         print(f"This boardcell is clear (x:{x},y:{y})")
+                        print("UUUH I am going east")
                         return x,y
                 if(self.check_orizontal_left(x,y)==True):#going left
                     self.initialLocation_x=x
@@ -213,6 +264,7 @@ class WorldDestroyer(BaseBot):
                     self.direction="W"
                     if self.board[x][y]==BoardCell.CLEAR:
                         print(f"This boardcell is clear (x:{x},y:{y})")
+                        print("UUUH I am going west")
                         return x,y
                 else:#if there are no winning moves, only draw so fuck it, go random
                     for _ in range(self.rows * self.cols):
@@ -234,16 +286,18 @@ class WorldDestroyer(BaseBot):
                     self.previous_y=y-1
                     if self.board[x+1][y-1]==BoardCell.CLEAR and self.check(x+1,y-1)==True:
                         print(f"This boardcell is clear (x:{x+1},y:{y-1})")
+                        print("UUUH I am going north east")
                         return x+1,y-1
                     else:
                         #print("blocked north")
-                        self.direction="SE"
+                        self.direction="SW"
                         x=self.initialLocation_x-1
                         y=self.initialLocation_y+1
                         self.previous_x=x
                         self.previous_y=y
                         if self.board[x][y]==BoardCell.CLEAR and self.check(x,y)==True:
                             print(f"This boardcell is clear (x:{x},y:{y})")
+                            print("UUUH I am going south east")
                             return x,y
                         else:
                             for _ in range(self.rows * self.cols):
@@ -257,20 +311,22 @@ class WorldDestroyer(BaseBot):
                                     print(f"This boardcell is clear (x:{x},y:{y})")
                                     return x, y
                 if(self.direction=="SE"):
-                    self.previous_x=x-1
+                    self.previous_x=x+1
                     self.previous_y=y+1
-                    if self.board[x-1][y+1]==BoardCell.CLEAR and self.check(x+1,y-1)==True:
-                        print(f"This boardcell is clear (x:{x-1},y:{y+1})")
-                        return x-1,y+1
+                    if self.board[x+1][y+1]==BoardCell.CLEAR and self.check(x+1,y+1)==True:
+                        print(f"This boardcell is clear (x:{x+1},y:{y+1})")
+                        print("UUUH I am going south east")
+                        return x+1,y+1
                     else:
                         #print("blocked north")
-                        self.direction="NE"
-                        x=self.initialLocation_x+1
+                        self.direction="NW"
+                        x=self.initialLocation_x-1
                         y=self.initialLocation_y-1
                         self.previous_x=x
                         self.previous_y=y
                         if self.board[x][y]==BoardCell.CLEAR and self.check(x,y)==True:
                             print(f"This boardcell is clear (x:{x},y:{y})")
+                            print("UUUH I am going north east")
                             return x,y
                         else:
                             for _ in range(self.rows * self.cols):
@@ -289,16 +345,18 @@ class WorldDestroyer(BaseBot):
                     self.previous_y=y-1
                     if self.board[x-1][y-1]==BoardCell.CLEAR and self.check(x+1,y-1)==True:
                         print(f"This boardcell is clear (x:{x-1},y:{y-1})")
+                        print("UUUH I am going north west")
                         return x-1,y-1
                     else:
                         #print("blocked north")
-                        self.direction="SW"
+                        self.direction="SE"
                         x=self.initialLocation_x+1
                         y=self.initialLocation_y+1
                         self.previous_x=x
                         self.previous_y=y
                         if self.board[x][y]==BoardCell.CLEAR and self.check(x,y)==True:
-                            print(f"This boardcell is clear (x:{x-1},y:{y-1})")
+                            print(f"This boardcell is clear (x:{x},y:{y})")
+                            print("UUUH I am going south west")
                             return x,y
                         else:
                             for _ in range(self.rows * self.cols):
@@ -314,20 +372,22 @@ class WorldDestroyer(BaseBot):
                 
 
                 if(self.direction=="SW"):
-                    self.previous_x=x+1
-                    self.previous_y=y-1
-                    if self.board[x+1][y-1]==BoardCell.CLEAR and self.check(x+1,y-1)==True:
-                        print(f"This boardcell is clear (x:{x+1},y:{y-1})")
-                        return x+1,y-1
+                    self.previous_x=x-1
+                    self.previous_y=y+1
+                    if self.board[x+1][y-1]==BoardCell.CLEAR and self.check(x-1,y+1)==True:
+                        print(f"This boardcell is clear (x:{x-1},y:{y+1})")
+                        print("UUUH I am going south west")
+                        return x-1,y+1
                     else:   
                         #print("blocked north")
                         self.direction="NE"
-                        x=self.initialLocation_x-1
-                        y=self.initialLocation_y+1
+                        x=self.initialLocation_x+1
+                        y=self.initialLocation_y-1
                         self.previous_x=x
                         self.previous_y=y
                         if self.board[x][y]==BoardCell.CLEAR and self.check(x,y)==True:
                             print(f"This boardcell is clear (x:{x},y:{y})")
+                            print("UUUH I am going north east")
                             return x,y
                         else:
                             for _ in range(self.rows * self.cols):
@@ -345,6 +405,7 @@ class WorldDestroyer(BaseBot):
                     self.previous_y=y-1
                     if self.board[x][y-1]==BoardCell.CLEAR:
                         print(f"This boardcell is clear (x:{x},y:{y-1})")
+                        print("UUUH I am going north")
                         return x,y-1
                     else:
                         #print("blocked north")
@@ -355,6 +416,7 @@ class WorldDestroyer(BaseBot):
                         self.previous_y=y
                         if self.board[x][y]==BoardCell.CLEAR and self.check(x,y)==True:
                             print(f"This boardcell is clear (x:{x},y:{y})")
+                            print("UUUH I am going south")
                             return x,y
                         else:
                             for _ in range(self.rows * self.cols):
@@ -372,6 +434,7 @@ class WorldDestroyer(BaseBot):
                     self.previous_y=y+1
                     if self.board[x][y+1]==BoardCell.CLEAR and self.check(x,y)==True:
                         print(f"This boardcell is clear (x:{x},y:{y+1})")
+                        print("UUUH I am going south")
                         return x,y+1
                     else:
                         #print("blocked south")
@@ -382,6 +445,7 @@ class WorldDestroyer(BaseBot):
                         self.previous_y=y
                         if self.board[x][y]==BoardCell.CLEAR and self.check(x,y)==True:
                             print(f"This boardcell is clear (x:{x},y:{y})")
+                            print("UUUH I am going north")
                             return x,y
                         else:
                             for _ in range(self.rows * self.cols):
@@ -399,6 +463,7 @@ class WorldDestroyer(BaseBot):
                     self.previous_y=y
                     if self.board[x+1][y]==BoardCell.CLEAR  and self.check(x,y)==True:
                         print(f"This boardcell is clear (x:{x+1},y:{y})")
+                        print("UUUH I am going east")
                         return x+1,y
                     else:
                         #print("blocked east")
@@ -409,6 +474,7 @@ class WorldDestroyer(BaseBot):
                         self.previous_y=y
                         if self.board[x][y]==BoardCell.CLEAR and self.check(x,y)==True:
                             print(f"This boardcell is clear (x:{x},y:{y})")
+                            print("UUUH I am going west")
                             return x,y
                         else:
                             for _ in range(self.rows * self.cols):
@@ -426,6 +492,7 @@ class WorldDestroyer(BaseBot):
                     self.previous_y=y
                     if self.board[x-1][y]==BoardCell.CLEAR and self.check(x,y)==True:
                         print(f"This boardcell is clear (x:{x-1},y:{y})")
+                        print("UUUH I am going west")
                         return x-1,y
                     else:
                         #print("blocked west")
@@ -436,6 +503,7 @@ class WorldDestroyer(BaseBot):
                         self.previous_y=y
                         if self.board[x][y]==BoardCell.CLEAR and self.check(x,y)==True:
                             print(f"This boardcell is clear (x:{x},y:{y})")
+                            print("UUUH I am going west")
                             return x,y
                         else:
                             for _ in range(self.rows * self.cols):
