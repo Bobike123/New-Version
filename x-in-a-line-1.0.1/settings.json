@@ -32,7 +32,7 @@
     0
   ],
   "FAST_MODE": true,
-  "SHUFFLE_PLAYERS_ON_START": true,
+  "SHUFFLE_PLAYERS_ON_START": false,
   "CHANCE_OF_BLOCKED_ON_START": 0.05,
   "RESTART_DELAY": 0,
   "KEY_DELAY": 50,
@@ -45,8 +45,8 @@
   "WIN_DIAG_POS": true,
   "WIN_DIAG_NEG": true,
   "BOTS": [
-    "WorldDestroyer",
     "PedestrianBot",
+    "WorldDestroyer",
     "SmartRandomBot",
     "SmartRandomBot",
     "SmartRandomBot",

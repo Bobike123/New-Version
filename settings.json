@@ -1,0 +1,52 @@
+{
+  "CELL_SIZE": 50,
+  "LINE_WIDTH": 3,
+  "WHITE": [
+    255,
+    255,
+    255
+  ],
+  "BLACK": [
+    0,
+    0,
+    0
+  ],
+  "FONT_COLOR": [
+    200,
+    0,
+    0
+  ],
+  "LINE_COLOR": [
+    0,
+    0,
+    0
+  ],
+  "BACKGROUND_COLOR": [
+    255,
+    255,
+    255
+  ],
+  "WINNING_LINE_COLOR": [
+    0,
+    210,
+    0
+  ],
+  "FAST_MODE": true,
+  "SHUFFLE_PLAYERS_ON_START": false,
+  "CHANCE_OF_BLOCKED_ON_START": 0.05,
+  "RESTART_DELAY": 0,
+  "KEY_DELAY": 50,
+  "GAME_TIME": 5000000000,
+  "BOARD_WIDTH": 15,
+  "BOARD_HEIGHT": 15,
+  "WIN_LENGTH": 5,
+  "WIN_HORIZONTAL": true,
+  "WIN_VERTICAL": true,
+  "WIN_DIAG_POS": true,
+  "WIN_DIAG_NEG": true,
+  "BOTS": [
+    "WorldDestroyer",
+    "SmartRandomBot",
+    "SmartRandomBot"
+  ]
+}
